@@ -1,0 +1,578 @@
+﻿@page "/Testing"
+
+<Mentoria.Components.Layout.SideNav></Mentoria.Components.Layout.SideNav>
+
+<main class="main-content border-radius-lg ">
+
+    <Mentoria.Components.Layout.NavBarDashboard></Mentoria.Components.Layout.NavBarDashboard>
+
+    <div class="container">
+        <h4>
+            Gallery
+        </h4>
+        <div class="row flex-row">
+            <div class="col-lg-5">
+                <img class="w-80 border-radius-lg ms-2" src="../assets/img/examples/product2.png" alt="ladydady" loading="lazy">
+                <div class="my-gallery d-flex mt-4 pt-2" itemscope itemtype="http://schema.org/ImageGallery">
+                    <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                        <a href="../assets/img/examples/product3.png" itemprop="contentUrl" data-size="500x600">
+                            <img class="w-100 min-height-100 max-height-100 border-radius-lg" src="../assets/img/examples/product3.png" alt="Image description" loading="lazy" />
+                        </a>
+                    </figure>
+                    <figure class="ms-3" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                        <a href="../assets/img/examples/product1.jpg" itemprop="contentUrl" data-size="500x600">
+                            <img class="w-100 min-height-100 max-height-100 border-radius-lg" src="../assets/img/examples/product1.jpg" itemprop="thumbnail" alt="Image description" loading="lazy" />
+                        </a>
+                    </figure>
+                    <figure class="ms-3" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                        <a href="../assets/img/examples/product4.jpg" itemprop="contentUrl" data-size="500x600">
+                            <img class="w-100 min-height-100 max-height-100 border-radius-lg" src="../assets/img/examples/product4.jpg" itemprop="thumbnail" alt="Image description" loading="lazy" />
+                        </a>
+                    </figure>
+                    <figure class="ms-3" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                        <a href="../assets/img/examples/product2.png" itemprop="contentUrl" data-size="500x600">
+                            <img class="w-100 min-height-100 max-height-100 border-radius-lg" src="../assets/img/examples/product2.png" itemprop="thumbnail" alt="Image description" loading="lazy" />
+                        </a>
+                    </figure>
+                </div>
+                <!-- Root element of PhotoSwipe. Must have class pswp. -->
+                <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+                    <!-- Background of PhotoSwipe.
+                    It's a separate element, as animating opacity is faster than rgba(). -->
+                    <div class="pswp__bg"></div>
+                    <!-- Slides wrapper with overflow:hidden. -->
+                    <div class="pswp__scroll-wrap">
+                        <!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+                        <!-- don't modify these 3 pswp__item elements, data is added later on. -->
+                        <div class="pswp__container">
+                            <div class="pswp__item"></div>
+                            <div class="pswp__item"></div>
+                            <div class="pswp__item"></div>
+                        </div>
+                        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+                        <div class="pswp__ui pswp__ui--hidden">
+                            <div class="pswp__top-bar">
+                                <!--  Controls are self-explanatory. Order can be changed. -->
+                                <div class="pswp__counter"></div>
+                                <button class="btn btn-white btn-sm pswp__button pswp__button--close">Cerrar (Esc)</button>
+                                <button class="btn btn-white btn-sm pswp__button pswp__button--fs">Pantalla completa</button>
+                                <button class="btn btn-white btn-sm pswp__button pswp__button--arrow--left">
+                                    Anterior
+                                </button>
+                                <button class="btn btn-white btn-sm pswp__button pswp__button--arrow--right">
+                                    Siguiente
+                                </button>
+                                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                                <!-- element will get class pswp__preloader--active when preloader is running -->
+                                <div class="pswp__preloader">
+                                    <div class="pswp__preloader__icn">
+                                        <div class="pswp__preloader__cut">
+                                            <div class="pswp__preloader__donut"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                                <div class="pswp__share-tooltip"></div>
+                            </div>
+                            <div class="pswp__caption">
+                                <div class="pswp__caption__center"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // Gallery Carousel
+            if (document.getElementById('products-carousel')) {
+                var myCarousel = document.querySelector('#products-carousel')
+                var carousel = new bootstrap.Carousel(myCarousel)
+            }
+
+            var initPhotoSwipeFromDOM = function (gallerySelector) {
+
+                // parse slide data (url, title, size ...) from DOM elements
+                // (children of gallerySelector)
+                var parseThumbnailElements = function (el) {
+                    var thumbElements = el.childNodes,
+                        numNodes = thumbElements.length,
+                        items = [],
+                        figureEl,
+                        linkEl,
+                        size,
+                        item;
+
+                    for (var i = 0; i < numNodes; i++) {
+
+                        figureEl = thumbElements[i]; // <figure> element
+                        // include only element nodes
+                        if (figureEl.nodeType !== 1) {
+                            continue;
+                        }
+
+                        linkEl = figureEl.children[0]; // <a> element
+
+                        size = linkEl.getAttribute('data-size').split('x');
+
+                        // create slide object
+                        item = {
+                            src: linkEl.getAttribute('href'),
+                            w: parseInt(size[0], 10),
+                            h: parseInt(size[1], 10)
+                        };
+
+                        if (figureEl.children.length > 1) {
+                            // <figcaption> content
+                            item.title = figureEl.children[1].innerHTML;
+                        }
+
+                        if (linkEl.children.length > 0) {
+                            // <img> thumbnail element, retrieving thumbnail url
+                            item.msrc = linkEl.children[0].getAttribute('src');
+                        }
+
+                        item.el = figureEl; // save link to element for getThumbBoundsFn
+                        items.push(item);
+                    }
+
+                    return items;
+                };
+
+                // find nearest parent element
+                var closest = function closest(el, fn) {
+                    return el && (fn(el) ? el : closest(el.parentNode, fn));
+                };
+
+                // triggers when user clicks on thumbnail
+                var onThumbnailsClick = function (e) {
+                    e = e || window.event;
+                    e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+                    var eTarget = e.target || e.srcElement;
+
+                    // find root element of slide
+                    var clickedListItem = closest(eTarget, function (el) {
+                        return (el.tagName && el.tagName.toUpperCase() === 'FIGURE');
+                    });
+
+                    if (!clickedListItem) {
+                        return;
+                    }
+
+                    // find index of clicked item by looping through all child nodes
+                    // alternatively, you may define index via data- attribute
+                    var clickedGallery = clickedListItem.parentNode,
+                        childNodes = clickedListItem.parentNode.childNodes,
+                        numChildNodes = childNodes.length,
+                        nodeIndex = 0,
+                        index;
+
+                    for (var i = 0; i < numChildNodes; i++) {
+                        if (childNodes[i].nodeType !== 1) {
+                            continue;
+                        }
+
+                        if (childNodes[i] === clickedListItem) {
+                            index = nodeIndex;
+                            break;
+                        }
+                        nodeIndex++;
+                    }
+
+
+
+                    if (index >= 0) {
+                        // open PhotoSwipe if valid index found
+                        openPhotoSwipe(index, clickedGallery);
+                    }
+                    return false;
+                };
+
+                // parse picture index and gallery index from URL (#&pid=1&gid=2)
+                var photoswipeParseHash = function () {
+                    var hash = window.location.hash.substring(1),
+                        params = {};
+
+                    if (hash.length < 5) {
+                        return params;
+                    }
+
+                    var vars = hash.split('&');
+                    for (var i = 0; i < vars.length; i++) {
+                        if (!vars[i]) {
+                            continue;
+                        }
+                        var pair = vars[i].split('=');
+                        if (pair.length < 2) {
+                            continue;
+                        }
+                        params[pair[0]] = pair[1];
+                    }
+
+                    if (params.gid) {
+                        params.gid = parseInt(params.gid, 10);
+                    }
+
+                    return params;
+                };
+
+                var openPhotoSwipe = function (index, galleryElement, disableAnimation, fromURL) {
+                    var pswpElement = document.querySelectorAll('.pswp')[0],
+                        gallery,
+                        options,
+                        items;
+
+                    items = parseThumbnailElements(galleryElement);
+
+                    // define options (if needed)
+                    options = {
+
+                        // define gallery index (for URL)
+                        galleryUID: galleryElement.getAttribute('data-pswp-uid'),
+
+                        getThumbBoundsFn: function (index) {
+                            // See Options -> getThumbBoundsFn section of documentation for more info
+                            var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
+                                pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                                rect = thumbnail.getBoundingClientRect();
+
+                            return {
+                                x: rect.left,
+                                y: rect.top + pageYScroll,
+                                w: rect.width
+                            };
+                        }
+
+                    };
+
+                    // PhotoSwipe opened from URL
+                    if (fromURL) {
+                        if (options.galleryPIDs) {
+                            // parse real index when custom PIDs are used
+                            // http://photoswipe.com/documentation/faq.html#custom-pid-in-url
+                            for (var j = 0; j < items.length; j++) {
+                                if (items[j].pid == index) {
+                                    options.index = j;
+                                    break;
+                                }
+                            }
+                        } else {
+                            // in URL indexes start from 1
+                            options.index = parseInt(index, 10) - 1;
+                        }
+                    } else {
+                        options.index = parseInt(index, 10);
+                    }
+
+                    // exit if index not found
+                    if (isNaN(options.index)) {
+                        return;
+                    }
+
+                    if (disableAnimation) {
+                        options.showAnimationDuration = 0;
+                    }
+
+                    // Pass data to PhotoSwipe and initialize it
+                    gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+                    gallery.init();
+                };
+
+                // loop through all gallery elements and bind events
+                var galleryElements = document.querySelectorAll(gallerySelector);
+
+                for (var i = 0, l = galleryElements.length; i < l; i++) {
+                    galleryElements[i].setAttribute('data-pswp-uid', i + 1);
+                    galleryElements[i].onclick = onThumbnailsClick;
+                }
+
+                // Parse URL and open gallery if it contains #&pid=3&gid=1
+                var hashData = photoswipeParseHash();
+                if (hashData.pid && hashData.gid) {
+                    openPhotoSwipe(hashData.pid, galleryElements[hashData.gid - 1], true, true);
+                }
+            };
+
+            // execute above function
+            initPhotoSwipeFromDOM('.my-gallery');
+        </script>
+        <h4>
+            Select2
+        </h4>
+        <div class="container">
+            <div class="row">
+                <div class="col-4 offset-md-2">
+                    <select class="selectExample" name="selectExample">
+                            <option selected disabled>Seleccioná un país</option>
+                            <option value="AR">Argentina</option>
+                            <option value="UY">Uruguay</option>
+                            <option value="CL">Chile</option>
+                            <option value="BR">Brasil</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('.selectExample').select2({
+                    language: {
+                        noResults: function () {
+                            return "No se encuentran resultados";
+                        },
+                        searching: function () {
+                            return "Buscando...";
+                        }
+                    }
+                });
+            });
+        </script>
+
+
+        <!--Tabs-->
+        <h4>Tabs</h4>
+        <p>No anda la navegacion entre tabs</p>
+        <div class="container">
+            <div class="row justify-space-between py-2">
+                <div class="col-lg-4 ms-auto">
+                    <div class="nav-wrapper position-relative">
+                        <ul class="nav nav-pills nav-fill flex-column p-1 me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 me-auto my-auto text-start">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                            The reading of all good books is like a conversation with the finest minds of past centuries.
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                            Comparing yourself to others is the thief of joy.
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                            It’s better to choose, commit, and get started instead of waiting for the best possible option.
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                            If you think you can learn a lot from reading books, try writing one.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Toast-->
+        <h4>Toast</h4>
+        <p>Me gustaria que al hacer clic en Mostrar toast, se muestre ese toast de abajo,en algun lado de la pantalla</p>
+        <div class="row">
+            <div class="col-6 mx-auto">
+                <button class="btn btn-success showtoast">Mostrar toast</button>
+                <div class="toast bg-gradient-dark fade  p-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header border-0 bg-transparent">
+                        <i class="material-icons me-2 text-white">diamond</i>
+                        <span class="me-auto font-weight-bold text-white">Material Design</span>
+                        <small class="text-white">11 mins ago</small>
+                        <i class="fas fa-times text-md ms-3 cursor-pointer text-white closetoast" aria-label="Close"></i>
+                    </div>
+                    <hr class="horizontal light m-0">
+                    <div class="toast-body text-white">
+                        Hello, world! This is a notification message.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Modal-->
+        <h4>Modal</h4>
+        <p>No anda el modal, no se muestra nada</p>
+        <div class="container">
+            <div class="row mt-5">
+                <div class="col-sm-3 col-6 mx-auto">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn bg-gradient-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Launch demo modal
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Your modal title</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Society has put up so many boundaries, so many limitations on what’s right and wrong that it’s almost impossible to get a pure thought out.
+                                    <br><br>
+                                    It’s like a little kid, a little boy, looking at colors, and no one told him what colors are good, before somebody tells you you shouldn’t like pink because that’s for girls, or you’d instantly become a gay two-year-old.
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn bg-gradient-dark mb-0" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn bg-gradient-primary mb-0">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Popovers-->
+        <h4>Popovers</h4>
+        <p>
+            Al hacer clic en un popover se debe mostrar un texto por encima del popover,
+            respetando las direcciones de cada uno
+        </p>
+        <div class="container">
+            <div class="row py-7 text-center">
+                <div>
+                    <button type="button" class="btn bg-gradient-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="That’s the main thing people are controlled by! Thoughts- their perception of themselves!">
+                        Popover on top
+                    </button>
+
+                    <button type="button" class="btn bg-gradient-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="We’re not always in the position that we want to be at.">
+                        Popover on right
+                    </button>
+
+                    <button type="button" class="btn bg-gradient-primary" data-bs-container="body" title="Popover with title" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="A lot of people don’t appreciate the moment until it’s passed.">
+                        Popover on bottom
+                    </button>
+
+                    <button type="button" class="btn bg-gradient-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="It really matters and then like it really doesn’t matter. What matters is the people who are sparked by it.">
+                        Popover on left
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- initialization script -->
+        <script>
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl)
+            })
+        </script>
+
+        <!--Tooltips-->
+        <h4>Tooltips</h4>
+        <p>
+            Al pasar el mouse por encima de un tooltip, deberia aparecer un texto encima de
+            cada tooltip
+        </p>
+        <div class="container">
+            <div class="row py-8 text-center">
+                <div>
+                    <button type="button" class="btn bg-gradient-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                        Tooltip on top
+                    </button>
+                    <button type="button" class="btn bg-gradient-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="Tooltip on right">
+                        Tooltip on right
+                    </button>
+                    <button type="button" class="btn bg-gradient-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tooltip on bottom">
+                        Tooltip on bottom
+                    </button>
+                    <button type="button" class="btn bg-gradient-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="Tooltip on left">
+                        Tooltip on left
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- initialization script -->
+        <script>
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        </script>
+
+        <!--Dropdowns-->
+        <h4>Dropdowns y dropups</h4>
+        <p>
+            Al hacer clic en un dropdown o dropup deberia desplegarse opciones a seleccionar
+        </p>
+        <!-- Start dropdowns & dropups -->
+        <div class="container py-7">
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-4 ms-lg-auto col-md-6 col-sm-3 d-flex justify-content-center">
+                        <div class="dropdown">
+                            <button class="btn bg-gradient-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown button
+                            </button>
+                            <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 me-lg-auto col-md-6 col-sm-3 d-flex justify-content-center">
+                        <div class="btn-group dropup mt-7">
+                            <button type="button" class="btn bg-gradient-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropup
+                            </button>
+                            <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--   end dropdowns & dropups -->
+
+        <footer class="footer py-4  ">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6 mb-lg-0 mb-4">
+                        <div class="copyright text-center text-sm text-muted text-lg-start">
+                            ©,
+                            made with <i class="fa fa-heart"></i> by
+                            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
+                            for a better web.
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted" target="_blank">License</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+</main>
+
+<Mentoria.Components.Layout.FixedPlugin></Mentoria.Components.Layout.FixedPlugin>
+
+@code {
+
+}
